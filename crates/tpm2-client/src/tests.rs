@@ -230,7 +230,7 @@ fn test_response_session_fails_validation() {
     fake_tpm.header.tag = tpm2::TpmiStCommandTag::Sessions;
     fake_tpm.add_to_response(&0u32);
     let invalid_auth = TpmsAuthResponse {
-        session_attributes: TpmaSession(0xf),
+        session_attributes: TpmaSession(0x7),
         ..Default::default()
     };
     let validation_failure = PasswordSession::default().validate_auth_response(&invalid_auth);
