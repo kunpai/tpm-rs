@@ -128,10 +128,10 @@ pub struct Data;
 impl Tag for Data {
     const CAP: usize = TpmtHa::MAX_SIZE;
 }
-/// Sized to the largest entity Name ([`TpmtHa::MAX_SIZE`]).
+/// Sized to the largest entity Name ([`TpmtHa::MAX_SIZE`]), rounded up to a multiple of 4.
 pub struct Name;
 impl Tag for Name {
-    const CAP: usize = TpmtHa::MAX_SIZE;
+    const CAP: usize = TpmtHa::MAX_SIZE.next_multiple_of(4);
 }
 /// Sized to the symmetric block size ([`AlgSym::BLOCK_SIZE`]).
 pub struct Iv;
