@@ -7,6 +7,7 @@ const MAX_CAP_DATA: usize = limits::MAX_CAP_BUFFER - TpmCap::MAX_SIZE - u32::MAX
 /// An element type that can be stored in a [`Tpml`] list, providing a `const` default value for uninitialized array slots.
 pub trait TpmlElement: Copy {
     const DEFAULT: Self;
+    const MIN_COUNT: u32 = 0;
 }
 
 /// A length-prefixed (`u32`) list of up to `CAP` elements of type `T` (representing `TPML_*` structures in TPM 2.0 Part 2, Section 10.5).
@@ -100,7 +101,7 @@ impl<'a, T: TpmlElement + Unmarshal<'a>, const CAP: usize> Unmarshal<'a> for Tpm
     fn unmarshal(src: &mut &'a [u8]) -> Result<Self, UnmarshalError> {
         let count = u32::unmarshal(src)?;
         const { assert!(CAP <= 0xFFFF_FFFF) };
-        if count > (CAP as u32) {
+        if count > (CAP as u32) || count < T::MIN_COUNT {
             return Err(UnmarshalError);
         }
 
@@ -268,6 +269,7 @@ pub type TpmlDigest<'a> = Tpml<Tpm2bDigest<'a>, 8>;
 impl_marshal!(TpmlDigest<'_>);
 impl<'a> TpmlElement for Tpm2bDigest<'a> {
     const DEFAULT: Self = Self::new(&[]).unwrap();
+    const MIN_COUNT: u32 = 2;
 }
 
 /// `TPML_DIGEST_VALUES` structure defined in TPM 2.0 Part 2: Structures, Section 10.5.7 (Table 126).
