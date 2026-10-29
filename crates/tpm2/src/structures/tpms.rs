@@ -1328,8 +1328,12 @@ impl Marshal for TpmsNvPublic<'_> {
 
 impl<'a> Unmarshal<'a> for TpmsNvPublic<'a> {
     fn unmarshal(src: &mut &'a [u8]) -> Result<Self, UnmarshalError> {
+        let nv_index: Handle = Unmarshal::unmarshal(src)?;
+        if !(Handle::NV_INDEX_FIRST..=Handle::NV_INDEX_LAST).contains(&nv_index) {
+            return Err(UnmarshalError);
+        }
         Ok(Self {
-            nv_index: Unmarshal::unmarshal(src)?,
+            nv_index,
             name_alg: Unmarshal::unmarshal(src)?,
             attributes: Unmarshal::unmarshal(src)?,
             auth_policy: Unmarshal::unmarshal(src)?,
@@ -1405,10 +1409,34 @@ impl Marshal for TpmsContext<'_> {
 
 impl<'a> Unmarshal<'a> for TpmsContext<'a> {
     fn unmarshal(src: &mut &'a [u8]) -> Result<Self, UnmarshalError> {
+        let sequence = Unmarshal::unmarshal(src)?;
+        let saved_handle: Handle = Unmarshal::unmarshal(src)?;
+        if !matches!(
+            saved_handle.0,
+            0x8000_0000..=0x8000_0002 | 0x0200_0000..=0x0200_003F | 0x0300_0000..=0x0300_003F
+        ) {
+            return Err(UnmarshalError);
+        }
+        let hierarchy: Handle = Unmarshal::unmarshal(src)?;
+        let svn = Handle::RH_SVN_OWNER_BASE.0..=Handle::RH_SVN_NULL_BASE.0 + 0xFFFF;
+        if !matches!(
+            hierarchy,
+            Handle::RH_OWNER
+                | Handle::RH_ENDORSEMENT
+                | Handle::RH_PLATFORM
+                | Handle::RH_NULL
+                | Handle::RH_FW_OWNER
+                | Handle::RH_FW_ENDORSEMENT
+                | Handle::RH_FW_PLATFORM
+                | Handle::RH_FW_NULL
+        ) && !svn.contains(&hierarchy.0)
+        {
+            return Err(UnmarshalError);
+        }
         Ok(Self {
-            sequence: Unmarshal::unmarshal(src)?,
-            saved_handle: Unmarshal::unmarshal(src)?,
-            hierarchy: Unmarshal::unmarshal(src)?,
+            sequence,
+            saved_handle,
+            hierarchy,
             context_blob: Unmarshal::unmarshal(src)?,
         })
     }
