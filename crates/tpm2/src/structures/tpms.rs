@@ -52,7 +52,7 @@ impl TpmsPcrSelect {
     /// The maximum number of PCRs implemented on the TPM.
     #[doc(alias = "IMPLEMENTATION_PCR")]
     #[doc(alias = "TPM2_MAX_PCRS")]
-    pub const MAX_PCRS: usize = 32;
+    pub const MAX_PCRS: usize = 24;
     /// The minimum number of bytes usable to select PCRs.
     #[doc(alias = "TPM2_PCR_SELECT_MIN")]
     #[doc(alias = "PCR_SELECT_MIN")]
