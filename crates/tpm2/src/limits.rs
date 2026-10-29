@@ -148,12 +148,12 @@ pub struct PublicKeyRsa;
 impl Tag for PublicKeyRsa {
     const CAP: usize = TpmiRsaKeyBits::MAX_PUB_KEY_BYTES;
 }
-/// Sized to the maximum supported RSA prime factor ([`TpmiRsaKeyBits::MAX_PRIV_KEY_BYTES`]).
+/// Sized to five times the maximum supported RSA prime factor ([`TpmiRsaKeyBits::MAX_PRIV_KEY_BYTES`]).
 #[cfg(feature = "rsa")]
 pub struct PrivateKeyRsa;
 #[cfg(feature = "rsa")]
 impl Tag for PrivateKeyRsa {
-    const CAP: usize = TpmiRsaKeyBits::MAX_PRIV_KEY_BYTES;
+    const CAP: usize = TpmiRsaKeyBits::MAX_PRIV_KEY_BYTES * 5;
 }
 /// Sized to the maximum supported ECC coordinate length ([`TpmEccCurve::MAX_ECC_KEY_BYTES`]).
 pub struct EccParameter;
