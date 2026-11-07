@@ -1257,8 +1257,14 @@ impl Marshal for TpmsAuthCommand<'_> {
 
 impl<'a> Unmarshal<'a> for TpmsAuthCommand<'a> {
     fn unmarshal(src: &mut &'a [u8]) -> Result<Self, UnmarshalError> {
+        let session_handle: Handle = Unmarshal::unmarshal(src)?;
+        if session_handle != Handle::RS_PW
+            && !matches!(session_handle.0, 0x0200_0000..=0x0200_003F | 0x0300_0000..=0x0300_003F)
+        {
+            return Err(UnmarshalError);
+        }
         Ok(Self {
-            session_handle: Unmarshal::unmarshal(src)?,
+            session_handle,
             nonce: Unmarshal::unmarshal(src)?,
             session_attributes: Unmarshal::unmarshal(src)?,
             hmac: Unmarshal::unmarshal(src)?,
@@ -1369,8 +1375,12 @@ impl Marshal for TpmsNvPublicExpAttr<'_> {
 
 impl<'a> Unmarshal<'a> for TpmsNvPublicExpAttr<'a> {
     fn unmarshal(src: &mut &'a [u8]) -> Result<Self, UnmarshalError> {
+        let nv_index: Handle = Unmarshal::unmarshal(src)?;
+        if nv_index.handle_type() != Some(TpmHt::ExternalNV) {
+            return Err(UnmarshalError);
+        }
         Ok(Self {
-            nv_index: Unmarshal::unmarshal(src)?,
+            nv_index,
             name_alg: Unmarshal::unmarshal(src)?,
             attributes: Unmarshal::unmarshal(src)?,
             auth_policy: Unmarshal::unmarshal(src)?,
