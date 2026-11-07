@@ -22,6 +22,8 @@ default = [
     "aes128", "aes192", "aes256", "sm4_128", "camellia128", "camellia192", "camellia256",
     # Symmetric Encryption Modes
     "ctr", "ofb", "cbc", "ecb",
+    # Key Derivation Functions
+    "hkdf",
     # Base Algorithm Families
     "cmac", "rsa", "ecc", "mldsa", "mlkem",
     # RSA Key Sizes
@@ -65,6 +67,11 @@ ctr = []
 ofb = []
 cbc = []
 ecb = []
+
+# Key Derivation Functions
+#
+# MGF1, KDF1_SP800_56A, KDF2 and KDF1_SP800_108 are always enabled.
+hkdf = []
 
 # Base Algorithm Families
 cmac = []

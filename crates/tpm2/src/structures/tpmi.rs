@@ -11,6 +11,7 @@ pub enum TpmiAlgKdf {
     Kdf1Sp800_56a = Alg::KDF1_SP800_56A.tag(),
     Kdf2 = Alg::KDF2.tag(),
     Kdf1Sp800_108 = Alg::KDF1_SP800_108.tag(),
+    #[cfg(feature = "hkdf")]
     Hkdf = Alg::HKDF.tag(),
 }
 
@@ -23,6 +24,7 @@ impl TryFrom<Alg> for Option<TpmiAlgKdf> {
             Alg::KDF1_SP800_56A => Ok(Some(TpmiAlgKdf::Kdf1Sp800_56a)),
             Alg::KDF2 => Ok(Some(TpmiAlgKdf::Kdf2)),
             Alg::KDF1_SP800_108 => Ok(Some(TpmiAlgKdf::Kdf1Sp800_108)),
+            #[cfg(feature = "hkdf")]
             Alg::HKDF => Ok(Some(TpmiAlgKdf::Hkdf)),
             _ => Err(UnmarshalError),
         }

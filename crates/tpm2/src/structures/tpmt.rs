@@ -1031,6 +1031,7 @@ pub enum TpmtKdfScheme {
     Kdf1Sp800_56a(TpmiAlgHash),
     Kdf2(TpmiAlgHash),
     Kdf1Sp800_108(TpmiAlgHash),
+    #[cfg(feature = "hkdf")]
     Hkdf(TpmiAlgHash),
 }
 
@@ -1042,6 +1043,7 @@ impl TpmtKdfScheme {
             Self::Kdf1Sp800_56a(_) => TpmiAlgKdf::Kdf1Sp800_56a,
             Self::Kdf2(_) => TpmiAlgKdf::Kdf2,
             Self::Kdf1Sp800_108(_) => TpmiAlgKdf::Kdf1Sp800_108,
+            #[cfg(feature = "hkdf")]
             Self::Hkdf(_) => TpmiAlgKdf::Hkdf,
         }
     }
@@ -1049,11 +1051,9 @@ impl TpmtKdfScheme {
     /// Returns the associated hash algorithm.
     pub const fn hash_alg(self) -> TpmiAlgHash {
         match self {
-            Self::Mgf1(h)
-            | Self::Kdf1Sp800_56a(h)
-            | Self::Kdf2(h)
-            | Self::Kdf1Sp800_108(h)
-            | Self::Hkdf(h) => h,
+            Self::Mgf1(h) | Self::Kdf1Sp800_56a(h) | Self::Kdf2(h) | Self::Kdf1Sp800_108(h) => h,
+            #[cfg(feature = "hkdf")]
+            Self::Hkdf(h) => h,
         }
     }
 }
@@ -1071,8 +1071,9 @@ impl Marshal for Option<TpmtKdfScheme> {
             TpmtKdfScheme::Mgf1(x)
             | TpmtKdfScheme::Kdf1Sp800_56a(x)
             | TpmtKdfScheme::Kdf2(x)
-            | TpmtKdfScheme::Kdf1Sp800_108(x)
-            | TpmtKdfScheme::Hkdf(x) => marshal_helper(x, dst, count),
+            | TpmtKdfScheme::Kdf1Sp800_108(x) => marshal_helper(x, dst, count),
+            #[cfg(feature = "hkdf")]
+            TpmtKdfScheme::Hkdf(x) => marshal_helper(x, dst, count),
         }
     }
 }
@@ -1087,6 +1088,7 @@ impl<'a> Unmarshal<'a> for Option<TpmtKdfScheme> {
             TpmiAlgKdf::Kdf1Sp800_56a => TpmtKdfScheme::Kdf1Sp800_56a(Unmarshal::unmarshal(src)?),
             TpmiAlgKdf::Kdf2 => TpmtKdfScheme::Kdf2(Unmarshal::unmarshal(src)?),
             TpmiAlgKdf::Kdf1Sp800_108 => TpmtKdfScheme::Kdf1Sp800_108(Unmarshal::unmarshal(src)?),
+            #[cfg(feature = "hkdf")]
             TpmiAlgKdf::Hkdf => TpmtKdfScheme::Hkdf(Unmarshal::unmarshal(src)?),
         }))
     }

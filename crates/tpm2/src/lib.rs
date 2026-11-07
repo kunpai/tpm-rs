@@ -51,6 +51,8 @@
 //! - **Symmetric ciphers** (at least one required): `aes128`, `aes192`,
 //!   `aes256`, `sm4_128`, `camellia128`, `camellia192`, `camellia256`
 //! - **Symmetric modes** (`CFB` is always enabled): `ctr`, `ofb`, `cbc`, `ecb`
+//! - **Key derivation functions** (`MGF1`, `KDF1_SP800_56A`, `KDF2` and
+//!   `KDF1_SP800_108` are always enabled): `hkdf`
 //! - **CMAC**: `cmac`
 //! - **Asymmetric families**: `rsa`, `ecc`, `mldsa` (pure ML-DSA), `mlkem`.
 //!   These are implied by the more specific features below. Each family always
