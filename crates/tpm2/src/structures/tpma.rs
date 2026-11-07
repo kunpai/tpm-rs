@@ -247,7 +247,11 @@ impl Marshal for TpmaNvExp {
 
 impl<'a> Unmarshal<'a> for TpmaNvExp {
     fn unmarshal(src: &mut &'a [u8]) -> Result<Self, UnmarshalError> {
-        Unmarshal::unmarshal(src).map(Self)
+        let attributes: u64 = Unmarshal::unmarshal(src)?;
+        if attributes & 0xFFFF_FFF8_01F0_0300 != 0 {
+            return Err(UnmarshalError);
+        }
+        Ok(Self(attributes))
     }
 }
 
@@ -290,7 +294,11 @@ impl Marshal for TpmaAlgorithm {
 
 impl<'a> Unmarshal<'a> for TpmaAlgorithm {
     fn unmarshal(src: &mut &'a [u8]) -> Result<Self, UnmarshalError> {
-        Unmarshal::unmarshal(src).map(Self)
+        let attributes: u32 = Unmarshal::unmarshal(src)?;
+        if attributes & 0xFFFF_F8F0 != 0 {
+            return Err(UnmarshalError);
+        }
+        Ok(Self(attributes))
     }
 }
 
@@ -521,7 +529,11 @@ impl Marshal for TpmaAct {
 
 impl<'a> Unmarshal<'a> for TpmaAct {
     fn unmarshal(src: &mut &'a [u8]) -> Result<Self, UnmarshalError> {
-        Unmarshal::unmarshal(src).map(Self)
+        let attributes: u32 = Unmarshal::unmarshal(src)?;
+        if attributes & 0xFFFF_FFFC != 0 {
+            return Err(UnmarshalError);
+        }
+        Ok(Self(attributes))
     }
 }
 
