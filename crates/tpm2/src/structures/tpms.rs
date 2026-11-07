@@ -1369,13 +1369,17 @@ impl Marshal for TpmsNvPublicExpAttr<'_> {
 
 impl<'a> Unmarshal<'a> for TpmsNvPublicExpAttr<'a> {
     fn unmarshal(src: &mut &'a [u8]) -> Result<Self, UnmarshalError> {
-        Ok(Self {
+        let public = Self {
             nv_index: Unmarshal::unmarshal(src)?,
             name_alg: Unmarshal::unmarshal(src)?,
             attributes: Unmarshal::unmarshal(src)?,
             auth_policy: Unmarshal::unmarshal(src)?,
             data_size: Unmarshal::unmarshal(src)?,
-        })
+        };
+        if public.data_size > 2048 {
+            return Err(UnmarshalError);
+        }
+        Ok(public)
     }
 }
 
